@@ -15,7 +15,7 @@ def create_app():
 
     migrate.init_app(app, db)
 
-    api = Api(app)
+    api = Api(app, catch_all_404s=True)
     initialize_routes(api)
 
     return app

@@ -25,16 +25,17 @@ class ProductResource(Resource):
 
         except Exception as e:
             print(f"An Error occured: {str(e)}")
-            return {"message": str(e)}, status.BAD_REQUEST
+            return {"message": str(e)}, HttpStatus.BAD_REQUEST
 
     def delete(self, product_id):
         try:
-            product = Product.query.get_or_404(product_id)
-
+            product = Product.query.get(product_id)
+            if not product:
+                return {"message": "Product not found!"}, HttpStatus.NOT_FOUND
             db.session.delete(product)
-            db.session.commit(product)
+            db.session.commit()
 
-            return product.to_dict(), HttpStatus.OK
+            return {}, HttpStatus.NO_CONTENT
 
         except Exception as e:
             print(f"An Error occured: {str(e)}")
