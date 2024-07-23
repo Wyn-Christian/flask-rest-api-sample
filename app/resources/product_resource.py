@@ -1,6 +1,5 @@
 from flask_restful import Resource, reqparse
 from http_constants.status import HttpStatus
-from http_constants import status
 
 from app.models.product_model import Product
 from app.models.user_model import User
