@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 
-from app.extensions import db, migrate
+from app.extensions import db, migrate, cors, jwt_manager
 from app.routes import initialize_routes
 
 
@@ -14,6 +14,8 @@ def create_app():
         db.create_all()
 
     migrate.init_app(app, db)
+    cors.init_app(app)
+    jwt_manager.init_app(app)
 
     api = Api(app, catch_all_404s=True)
     initialize_routes(api)
