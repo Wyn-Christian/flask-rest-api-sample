@@ -1,8 +1,11 @@
+# __init__.py
+
 from flask import Flask
 from flask_restful import Api
 
 from app.extensions import db, migrate, cors, jwt_manager, login_manager
 from app.routes import initialize_routes
+from app.utils.errors import error_handlers
 
 
 def create_app():
@@ -18,7 +21,11 @@ def create_app():
     jwt_manager.init_app(app)
     login_manager.init_app(app)
 
-    api = Api(app, catch_all_404s=True)
+    api = Api(app)
+
     initialize_routes(api)
+
+    for exc, handler in error_handlers:
+        app.register_error_handler(exc, handler)
 
     return app
