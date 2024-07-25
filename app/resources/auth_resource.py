@@ -1,26 +1,36 @@
 # app/resources/auth_resource.py
 
+from flask import jsonify
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
     jwt_required,
     get_jwt_identity,
+    set_access_cookies,
+    set_refresh_cookies,
+    unset_jwt_cookies,
 )
 from http_constants.status import HttpStatus
 
 from app.models.user_model import User
 from app.extensions import db
 
-parser = reqparse.RequestParser()
-parser.add_argument("username", type=str, required=True, help="Username is required")
-parser.add_argument("email", type=str, required=True, help="Email is required")
-parser.add_argument("password", type=str, required=True, help="Password is required")
-
 
 class RegisterResource(Resource):
     def post(self):
-        args = parser.parse_args()
+        register_parser = reqparse.RequestParser()
+        register_parser.add_argument(
+            "username", type=str, required=True, help="Username is required"
+        )
+        register_parser.add_argument(
+            "email", type=str, required=True, help="Email is required"
+        )
+        register_parser.add_argument(
+            "password", type=str, required=True, help="Password is required"
+        )
+
+        args = register_parser.parse_args()
         username = args["username"]
         email = args["email"]
         password = args["password"]
@@ -42,7 +52,15 @@ class RegisterResource(Resource):
 
 class LoginResource(Resource):
     def post(self):
-        args = parser.parse_args()
+        login_parser = reqparse.RequestParser()
+        login_parser.add_argument(
+            "email", type=str, required=True, help="Email is required"
+        )
+        login_parser.add_argument(
+            "password", type=str, required=True, help="Password is required"
+        )
+
+        args = login_parser.parse_args()
         email = args["email"]
         password = args["password"]
 
@@ -53,12 +71,19 @@ class LoginResource(Resource):
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
 
-        response = {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-        }
+        response = jsonify({"message": "Login Successfully"})
 
-        return response, HttpStatus.OK
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
+
+        return response
+
+
+class LogoutResource(Resource):
+    def post(self):
+        response = jsonify({"message": "Logout Successfully!"})
+        unset_jwt_cookies(response)
+        return response
 
 
 class ProtectedResource(Resource):
