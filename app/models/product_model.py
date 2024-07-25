@@ -1,3 +1,5 @@
+# app/models/product_model.py
+
 from app.extensions import db
 
 

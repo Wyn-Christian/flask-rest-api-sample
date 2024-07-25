@@ -1,3 +1,5 @@
+# app/routes/product_routes.py
+
 from flask_restful import Api
 from app.resources.product_resource import ProductResource, ProductListResource
 

@@ -1,3 +1,5 @@
+# app/resources/product_resource.py
+
 from flask_restful import Resource, reqparse
 from http_constants.status import HttpStatus
 

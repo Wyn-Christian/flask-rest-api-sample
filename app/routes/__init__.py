@@ -1,3 +1,5 @@
+# app/routes/__init__.py
+
 from app.routes.user_routes import initialize_user_routes
 from app.routes.product_routes import initialize_product_routes
 
