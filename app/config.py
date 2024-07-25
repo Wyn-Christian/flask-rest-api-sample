@@ -14,6 +14,9 @@ class Config:
     JWT_TOKEN_LOCATION = ["cookies", "headers"]
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY") or "super-secret"
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=8)
-    JWT_COOKIE_NAME = "access_token_cookie"
-    JWT_REFRESH_TOKEN_COOKIE_NAME = "refresh_token_cookie"
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
+    JWT_COOKIE_NAME = os.environ.get("JWT_COOKIE_NAME") or "access_token_cookie"
+    JWT_REFRESH_TOKEN_COOKIE_NAME = (
+        os.environ.get("JWT_REFRESH_TOKEN_COOKIE_NAME") or "refresh_token_cookie"
+    )
     JWT_COOKIE_CSRF_PROTECT = False
