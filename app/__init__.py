@@ -5,7 +5,7 @@ from flask_restful import Api
 
 from app.extensions import db, migrate, cors, jwt_manager, login_manager
 from app.routes import initialize_routes
-from app.utils.errors import error_handlers
+from app.utils.errors import register_error_handlers
 
 
 def create_app():
@@ -22,10 +22,8 @@ def create_app():
     login_manager.init_app(app)
 
     api = Api(app)
-
     initialize_routes(api)
 
-    for exc, handler in error_handlers:
-        app.register_error_handler(exc, handler)
+    register_error_handlers(app)
 
     return app
