@@ -1,6 +1,7 @@
 # app/utils/errors.py
 
 from werkzeug.exceptions import HTTPException, NotFound
+from flask_jwt_extended.exceptions import NoAuthorizationError
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError, OperationalError
 from http_constants.status import HttpStatus
 
@@ -47,11 +48,25 @@ def handle_operational_error(e):
     return response, HttpStatus.INTERNAL_SERVER_ERROR
 
 
+def handle_no_auth_error(e):
+    response = {
+        "error": "No Authorization Error",
+        "message": "Missing JWT in cookies or headers!",
+    }
+    return response, HttpStatus.INTERNAL_SERVER_ERROR
+
+
 error_handlers = [
     (Exception, handle_error),
     (HTTPException, handle_http_error),
     (NotFound, handle_not_found_error),
+    (NoAuthorizationError, handle_no_auth_error),
     (SQLAlchemyError, handle_sqlalchemy_error),
     (IntegrityError, handle_integrity_error),
     (OperationalError, handle_operational_error),
 ]
+
+
+def register_error_handlers(app):
+    for exc, handler in error_handlers:
+        app.register_error_handler(exc, handler)
