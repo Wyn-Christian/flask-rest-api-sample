@@ -9,6 +9,7 @@ from app.extensions import db
 parser = reqparse.RequestParser()
 parser.add_argument("username", type=str, required=True, help="Username is required")
 parser.add_argument("email", type=str, required=True, help="Email is required")
+parser.add_argument("password", type=str, required=True, help="Password is required")
 
 
 class UserResource(Resource):
@@ -47,6 +48,8 @@ class UserListResource(Resource):
     def post(self):
         args = parser.parse_args()
         user = User(username=args["username"], email=args["email"])
+        user.set_password(args["password"])
+
         db.session.add(user)
         db.session.commit()
 
