@@ -19,7 +19,7 @@ class UserResource(Resource):
             return abort(
                 HttpStatus.NOT_FOUND,
                 error="User Not Found",
-                message=f"User id {user_id} not found",
+                message=f"User ID ({user_id}) not found",
             )
 
         return user.to_dict(), HttpStatus.OK
@@ -30,7 +30,7 @@ class UserResource(Resource):
             return abort(
                 HttpStatus.NOT_FOUND,
                 error="User Not Found",
-                message=f"User id {user_id} not found",
+                message=f"User ID ({user_id}) not found",
             )
 
         db.session.delete(user)
