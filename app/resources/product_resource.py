@@ -1,80 +1,75 @@
 # app/resources/product_resource.py
 
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, abort
 from http_constants.status import HttpStatus
 
 from app.models.product_model import Product
 from app.models.user_model import User
 from app.extensions import db
 
-parser = reqparse.RequestParser()
-parser.add_argument("name", type=str, required=True, help="Name is required")
-parser.add_argument("description", type=str, required=True, help="Name is required")
-parser.add_argument("price", type=str, required=True, help="Name is required")
-parser.add_argument("stock", type=str, required=True, help="Name is required")
-parser.add_argument("owner_id", type=str, required=True, help="Name is required")
-
 
 class ProductResource(Resource):
     def get(self, product_id):
-        try:
-            product = Product.query.get(product_id)
-            if not product:
-                return {}, HttpStatus.NOT_FOUND
+        product = Product.query.get(product_id)
+        if not product:
+            return abort(
+                HttpStatus.NOT_FOUND,
+                error="Product Not Found",
+                message=f"Product ID ({product_id}) not found",
+            )
 
-            return product.to_dict(), HttpStatus.OK
-
-        except Exception as e:
-            print(f"An Error occured: {str(e)}")
-            return {"message": str(e)}, HttpStatus.BAD_REQUEST
+        return product.to_dict(), HttpStatus.OK
 
     def delete(self, product_id):
-        try:
-            product = Product.query.get(product_id)
-            if not product:
-                return {"message": "Product not found!"}, HttpStatus.NOT_FOUND
-            db.session.delete(product)
-            db.session.commit()
+        product = Product.query.get(product_id)
+        if not product:
+            return abort(
+                HttpStatus.NOT_FOUND,
+                error="Product Not Found",
+                message=f"Product ID ({product_id}) not found",
+            )
+        db.session.delete(product)
+        db.session.commit()
 
-            return {}, HttpStatus.NO_CONTENT
-
-        except Exception as e:
-            print(f"An Error occured: {str(e)}")
-            return {"message": str(e)}, HttpStatus.BAD_REQUEST
+        return {}, HttpStatus.NO_CONTENT
 
 
 class ProductListResource(Resource):
     def get(self):
-        try:
-            products = Product.query.all()
-            return [product.to_dict() for product in products], HttpStatus.OK
+        products = Product.query.all()
 
-        except Exception as e:
-            print(f"An Error occured: {str(e)}")
-            return {"message": str(e)}, HttpStatus.BAD_REQUEST
+        return [product.to_dict() for product in products], HttpStatus.OK
 
     def post(self):
-        try:
-            args = parser.parse_args()
-            owner = User.query.get(args["owner_id"])
-            if not owner:
-                return {
-                    "message": f"`owner_id` ({args['owner_id']}) doesn't exist!"
-                }, HttpStatus.NOT_FOUND
+        parser = reqparse.RequestParser()
+        parser.add_argument("name", type=str, required=True, help="Name is required")
+        parser.add_argument(
+            "description", type=str, required=True, help="Name is required"
+        )
+        parser.add_argument("price", type=str, required=True, help="Name is required")
+        parser.add_argument("stock", type=str, required=True, help="Name is required")
+        parser.add_argument(
+            "owner_id", type=str, required=True, help="Name is required"
+        )
 
-            product = Product(
-                name=args["name"],
-                description=args.get("description"),
-                price=args["price"],
-                stock=args["stock"],
-                owner=owner,
+        args = parser.parse_args()
+        owner = User.query.get(args["owner_id"])
+        if not owner:
+            return abort(
+                HttpStatus.NOT_FOUND,
+                error="Owner/User Not Found",
+                message=f"Owner/User ID ({args['owner_id']}) not found",
             )
 
-            db.session.add(product)
-            db.session.commit()
+        product = Product(
+            name=args["name"],
+            description=args.get("description"),
+            price=args["price"],
+            stock=args["stock"],
+            owner=owner,
+        )
 
-            return product.to_dict(), HttpStatus.CREATED
+        db.session.add(product)
+        db.session.commit()
 
-        except Exception as e:
-            print(f"An Error occured: {str(e)}")
-            return {"message": str(e)}, HttpStatus.BAD_REQUEST
+        return product.to_dict(), HttpStatus.CREATED
