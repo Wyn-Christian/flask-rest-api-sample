@@ -1,19 +1,24 @@
 # app/models/product_model.py
 
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Integer, String, Float, ForeignKey
+
 from app.extensions import db
 
 
 class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False)
-    description = db.Column(db.String(256), nullable=True)
-    price = db.Column(db.Float, nullable=False)
-    stock = db.Column(db.Integer, default=0)
+    __tablename__ = "product"
 
-    owner_id = db.Column(
-        db.Integer,
-        db.ForeignKey("user.id"),
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(nullable=False)
+    description: Mapped[str]
+    price: Mapped[float]
+    stock: Mapped[int] = mapped_column(default=0)
+
+    owner_id: Mapped[int] = mapped_column(
+        ForeignKey("user_account.id"),
     )
+    owner: Mapped["User"] = relationship(back_populates="products")
 
     def __repr__(self):
         return f"<Product {self.name}>"
