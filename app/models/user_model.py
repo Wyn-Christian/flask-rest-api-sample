@@ -1,16 +1,21 @@
 # app/models/user_model.py
 
-from app.extensions import db
+from typing import List
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from app.extensions import db
 
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
-    password_hash = db.Column(db.String(128))
+    __tablename__ = "user_account"
 
-    products = db.relationship("Product", backref="owner", lazy=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(index=True, unique=True)
+    email: Mapped[str] = mapped_column(index=True, unique=True)
+    password_hash: Mapped[str]
+
+    products: Mapped[List["Product"]] = relationship()
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
