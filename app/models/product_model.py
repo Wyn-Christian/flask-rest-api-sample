@@ -1,7 +1,7 @@
 # app/models/product_model.py
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, Float, ForeignKey
+from sqlalchemy import  ForeignKey
 
 from app.extensions import db
 
