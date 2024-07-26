@@ -20,3 +20,11 @@ class Config:
         os.environ.get("JWT_REFRESH_TOKEN_COOKIE_NAME") or "refresh_token_cookie"
     )
     JWT_COOKIE_CSRF_PROTECT = False
+
+    MAIL_SERVER = os.environ.get("MAIL_SERVER")
+    MAIL_PORT = os.environ.get("MAIL_PORT")
+    MAIL_DEFAULT_SENDER = os.environ.get("MAIL_USERNAME")
+    MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
+    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
