@@ -15,6 +15,7 @@ from http_constants.status import HttpStatus
 
 from app.models.user_model import User
 from app.extensions import db
+from app.services.email_service import send_notification_email
 
 
 class RegisterResource(Resource):
@@ -46,6 +47,13 @@ class RegisterResource(Resource):
 
         db.session.add(new_user)
         db.session.commit()
+        
+        send_notification_email(
+            subject="Registered Successfully!",
+            to=email,
+            html=f"Hi, <b>{username}</b>! You have successfully registered!",
+            body=f"Hi, {username}! You have successfully registered!",
+        )
 
         return {"message": "User registered successfully"}, HttpStatus.CREATED
 
@@ -75,6 +83,13 @@ class LoginResource(Resource):
 
         set_access_cookies(response, access_token)
         set_refresh_cookies(response, refresh_token)
+
+        send_notification_email(
+            subject="Login Successfully!",
+            to=email,
+            html=f"Hi, <b>{user.username}</b>! You have successfully login!",
+            body=f"Hi, {user.username}! You have successfully login!",
+        )
 
         return response
 
