@@ -1,6 +1,7 @@
 # app/resources/product_resource.py
 
 from flask_restful import Resource, reqparse, abort
+from flask_jwt_extended import jwt_required
 from http_constants.status import HttpStatus
 
 from app.models.product_model import Product
@@ -9,6 +10,7 @@ from app.extensions import db
 
 
 class ProductResource(Resource):
+    @jwt_required()
     def get(self, product_id):
         product = Product.query.get(product_id)
         if not product:
@@ -20,6 +22,7 @@ class ProductResource(Resource):
 
         return product.to_dict(), HttpStatus.OK
 
+    @jwt_required()
     def delete(self, product_id):
         product = Product.query.get(product_id)
         if not product:
@@ -35,11 +38,13 @@ class ProductResource(Resource):
 
 
 class ProductListResource(Resource):
+    @jwt_required()
     def get(self):
         products = Product.query.all()
 
         return [product.to_dict() for product in products], HttpStatus.OK
 
+    @jwt_required()
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("name", type=str, required=True, help="Name is required")
