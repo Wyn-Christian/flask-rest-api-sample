@@ -1,6 +1,7 @@
 # app/resources/user_resource.py
 
 from flask_restful import Resource, reqparse, abort
+from flask_jwt_extended import jwt_required
 from http_constants.status import HttpStatus
 
 from app.models.user_model import User
@@ -13,6 +14,7 @@ parser.add_argument("password", type=str, required=True, help="Password is requi
 
 
 class UserResource(Resource):
+    @jwt_required()
     def get(self, user_id):
         user = User.query.get(user_id)
         if not user:
@@ -24,6 +26,7 @@ class UserResource(Resource):
 
         return user.to_dict(), HttpStatus.OK
 
+    @jwt_required()
     def delete(self, user_id):
         user = User.query.get(user_id)
         if not user:
@@ -40,11 +43,13 @@ class UserResource(Resource):
 
 
 class UserListResource(Resource):
+    @jwt_required()
     def get(self):
         users = User.query.all()
 
         return [user.to_dict() for user in users], HttpStatus.OK
 
+    @jwt_required()
     def post(self):
         args = parser.parse_args()
         user = User(username=args["username"], email=args["email"])
