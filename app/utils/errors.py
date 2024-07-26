@@ -53,7 +53,7 @@ def handle_no_auth_error(e):
         "error": "No Authorization Error",
         "message": "Missing JWT in cookies or headers!",
     }
-    return response, HttpStatus.INTERNAL_SERVER_ERROR
+    return response, HttpStatus.UNAUTHORIZED
 
 
 error_handlers = [
