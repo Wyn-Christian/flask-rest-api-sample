@@ -2,9 +2,9 @@
 
 from flask_restful import Api
 
-from app.routes.user_routes import user_routes
-from app.routes.product_routes import product_routes
-from app.routes.auth_routes import auth_routes
+from .user_routes import user_routes
+from .product_routes import product_routes
+from .auth_routes import auth_routes
 
 
 def initialize_routes(api: Api):
