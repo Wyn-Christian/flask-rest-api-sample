@@ -4,7 +4,7 @@ from flask_restful import Resource, reqparse, abort
 from flask_jwt_extended import jwt_required
 from http_constants.status import HttpStatus
 
-from app.models.user_model import User
+from app.models import  User
 from app.extensions import db
 
 parser = reqparse.RequestParser()

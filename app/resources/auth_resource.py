@@ -13,7 +13,7 @@ from flask_jwt_extended import (
 )
 from http_constants.status import HttpStatus
 
-from app.models.user_model import User
+from app.models import User
 from app.extensions import db
 from app.services.email_service import send_notification_email
 
